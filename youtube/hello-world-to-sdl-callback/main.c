@@ -1,17 +1,24 @@
+#define SDL_MAIN_USE_CALLBACKS 1
+
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
 
-int main() {
+SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
+    SDL_Init(SDL_INIT_VIDEO);
+    return SDL_APP_CONTINUE;
+}
 
-    if (!SDL_Init(SDL_INIT_VIDEO)) {
-        SDL_Log("Failed!");
-        return -1;
+SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
+    if (event->type == SDL_EVENT_QUIT) {
+        return SDL_APP_SUCCESS;
     }
+    return SDL_APP_CONTINUE;
+}
 
-    SDL_Window* window = SDL_CreateWindow("Hello World", 800, 600, 
-        SDL_WINDOW_RESIZABLE);
+SDL_AppResult SDL_AppIterate(void *appstate) {
+    return SDL_APP_CONTINUE;
+}
 
-    SDL_Delay(50000);
+void SDL_AppQuit(void *appstate, SDL_AppResult result) {
     SDL_Quit();
-
-    return 0;
 }
