@@ -22,7 +22,7 @@ int main() {
                 running = false;
             } 
             else if (event.type == SDL_EVENT_KEY_DOWN) {
-                SDL_Log("Key Pressed");
+                SDL_Log("Key Pressed: %d", event.key.key);
             }
         }
 
