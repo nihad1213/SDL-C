@@ -41,35 +41,10 @@ int main() {
 
             if (event.type == SDL_EVENT_QUIT) {
                 running = false;
-            }
-
-            // KEY DOWN TEST
-            else if (event.type == SDL_EVENT_KEY_DOWN) {
-
-                SDL_Log("KEY DOWN -> key=%s | scancode=%s",
-                    SDL_GetKeyName(event.key.key),
-                    SDL_GetScancodeName(event.key.scancode)
-                );
-
-                // special test cases
-                if (event.key.scancode == SDL_SCANCODE_SPACE) {
-                    SDL_Log("SPACE pressed!");
-                }
-            }
-
-            // KEY UP TEST
-            else if (event.type == SDL_EVENT_KEY_UP) {
-                SDL_Log("KEY UP -> scancode=%s",
-                    SDL_GetScancodeName(event.key.scancode)
-                );
+            } else if (event.type == SDL_EVENT_KEY_DOWN) {
+                
             }
         }
-
-        // HOLD TEST (real-time input)
-        if (keys[SDL_SCANCODE_W]) SDL_Log("Holding W");
-        if (keys[SDL_SCANCODE_A]) SDL_Log("Holding A");
-        if (keys[SDL_SCANCODE_S]) SDL_Log("Holding S");
-        if (keys[SDL_SCANCODE_D]) SDL_Log("Holding D");
 
         // render loop (empty visual)
         SDL_SetRenderDrawColor(renderer, 20, 20, 20, 255);
