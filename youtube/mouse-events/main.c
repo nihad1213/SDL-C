@@ -41,8 +41,8 @@ int main() {
 
             if (event.type == SDL_EVENT_QUIT) {
                 running = false;
-            } else if (event.type == SDL_EVENT_KEY_DOWN) {
-                
+            } else if (event.type == SDL_EVENT_MOUSE_MOTION) {
+                SDL_Log("x, y: %f, %f", event.motion.x, event.motion.y);
             }
         }
 
