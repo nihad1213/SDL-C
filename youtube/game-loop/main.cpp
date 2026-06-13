@@ -27,9 +27,9 @@ struct SDLApplication {
 
     }
 
-    void Render() [
+    void Render() {
         
-    ]
+    }
 };
 
 int main() {
