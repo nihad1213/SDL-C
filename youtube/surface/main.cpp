@@ -4,10 +4,14 @@
 struct SDLApplication {
     SDL_Window* mWindow = nullptr;
     SDL_Renderer* mRenderer = nullptr;
+    SDL_Texture* mTexture = nullptr;
     bool mRunning = true;
 
     SDLApplication(const char* title) {
-        SDL_Init(SDL_INIT_VIDEO);
+        if (!SDL_Init(SDL_INIT_VIDEO)) {
+            SDL_Log("SDL_Init failed: %s", SDL_GetError());
+            return;
+        }
 
         mWindow = SDL_CreateWindow(
             title,
@@ -16,12 +20,43 @@ struct SDLApplication {
             SDL_WINDOW_RESIZABLE
         );
 
+        if (!mWindow) {
+            SDL_Log("Window creation failed: %s", SDL_GetError());
+            return;
+        }
+
         mRenderer = SDL_CreateRenderer(mWindow, nullptr);
+
+        if (!mRenderer) {
+            SDL_Log("Renderer creation failed: %s", SDL_GetError());
+            return;
+        }
+
+        SDL_Surface* surface = SDL_LoadBMP("test.bmp");
+
+        if (!surface) {
+            SDL_Log("Failed to load test.bmp: %s", SDL_GetError());
+            return;
+        }
+
+        mTexture = SDL_CreateTextureFromSurface(mRenderer, surface);
+        SDL_DestroySurface(surface);
+
+        if (!mTexture) {
+            SDL_Log("Failed to create texture: %s", SDL_GetError());
+        }
     }
 
     ~SDLApplication() {
-        SDL_DestroyRenderer(mRenderer);
-        SDL_DestroyWindow(mWindow);
+        if (mTexture)
+            SDL_DestroyTexture(mTexture);
+
+        if (mRenderer)
+            SDL_DestroyRenderer(mRenderer);
+
+        if (mWindow)
+            SDL_DestroyWindow(mWindow);
+
         SDL_Quit();
     }
 
@@ -42,24 +77,19 @@ struct SDLApplication {
     }
 
     void Update() {
-        // Game logic goes here
     }
 
     void Render() {
-        SDL_SetRenderDrawColor(mRenderer, 30, 30, 30, 255);
-
         SDL_RenderClear(mRenderer);
 
-        // Draw a rectangle
-        SDL_FRect rect = {
-            300.0f,
-            200.0f,
-            200.0f,
-            100.0f
-        };
-
-        SDL_SetRenderDrawColor(mRenderer, 255, 0, 0, 255);
-        SDL_RenderFillRect(mRenderer, &rect);
+        if (mTexture) {
+            SDL_RenderTexture(
+                mRenderer,
+                mTexture,
+                nullptr,
+                nullptr 
+            );
+        }
 
         SDL_RenderPresent(mRenderer);
     }
@@ -67,11 +97,12 @@ struct SDLApplication {
     void MainLoop() {
         Uint64 fps = 0;
         Uint64 lastTime = SDL_GetTicks();
+
         while (mRunning) {
             Uint64 currentTick = SDL_GetTicks();
 
             Tick();
-            SDL_Delay(60);
+
             fps++;
 
             if (currentTick - lastTime >= 1000) {
